@@ -15,7 +15,7 @@ calcPi :: Int -> Int -> [Double] -> [Double]
 calcPi n k acc | k>(n-1) = acc
                | otherwise = (form:calcPi n (k+1) acc)
    where form = (factorial k) / (doubfact (2*k+1))
-
+-- Commited -> refreshed 
 approxPi :: Int -> Double
 approxPi n | n<=0 = error "Not valid number"
            | otherwise = 2 * sum (calcPi n 0 [])
