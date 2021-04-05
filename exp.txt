@@ -1,1 +1,16 @@
 let x = 34 in x + 17^C
+
+take Names from Belejnici
+remove Empty from Belejnici
+
+
+||
+&&
+remove
+take
+from
+=
+<
+>
+(
+)

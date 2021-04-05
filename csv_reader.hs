@@ -2,8 +2,8 @@ import Control.Exception
 import System.IO
 import Data.List
 
-fileMZip :: () -> IO ()
-fileMZip () = catch ( fileMZip' () ) filehandler
+fileMZip :: String -> Int -> IO ()
+fileMZip str n = catch ( fileMZip' str n ) filehandler
 
 filehandler :: IOException -> IO ()
 filehandler e = do let errMsg = show (e :: IOException)
@@ -15,9 +15,9 @@ multiZipL [] = []
 multiZipL ([] : xss) = multiZipL xss
 multiZipL ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : multiZipL (xs : [ t | (_:t) <- xss])
 
-fileMZip' :: () -> IO ()
-fileMZip' () = do
-  s <- readFile "test.csv"
+fileMZip' :: String -> Int -> IO ()
+fileMZip' str n = do
+  s <- readFile (str ++ ".csv")
   let ls = lines s
   let sss = map (splitOn ',') ls
 --  let iss = map (map read) sss :: [[Int]]
