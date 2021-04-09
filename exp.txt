@@ -4,6 +4,37 @@ take Names from Belejnici
 remove Empty from Belejnici
 
 
+
+
+select x1 x2
+where exists z in A (x1 z) & B (z x2);
+
+
+select x1 x2 x3 x4 x5 
+where {
+    R(x1 x2)
+    R(x2 x3)
+    R(x3 x4)
+    R(x4 x5)
+    x1=x5
+};
+
+
+conjunt R(x1 x2) R(x3 x4) R(x5 x6) R(x7 x8) = select x1 x2 x3 x4 x5
+   where x1=x8
+         x2=x3
+         x4=x5
+         x6=x7
+
+do conjunt $A:2 $B:2 $C:2
+
+where
+get x1 x2 from A & x3 x4 from B
+
+show a1,a2,a1 where A(a1) defin a2 = 0
+
+
+
 ||
 &&
 remove
