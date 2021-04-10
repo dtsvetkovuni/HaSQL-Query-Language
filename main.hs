@@ -1,7 +1,7 @@
 import Data.List
-import Tokens
-import System.Environment
-import Control.Exception
+import Tokens ( alexScanTokens )
+import System.Environment ( getArgs )
+import Control.Exception ( catch, ErrorCall )
 import System.IO
 
 main :: IO ()

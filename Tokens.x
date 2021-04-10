@@ -23,6 +23,7 @@ tokens :-
   \)            { \p s -> TokenRParen p }
   $digit+       { \p s -> TokenInt p (read s) } 
   $alpha [$alpha $digit \_ \’]*   { \p s -> TokenVar p s } 
+ -- [$alpha $digit \_] [$alpha $digit \’]* { \p s -> TokenLocalVar p s }
 
 { 
 -- Each action has type :: AlexPosn -> String -> Token 
@@ -40,7 +41,8 @@ data Token =
   TokenLParen AlexPosn        |
   TokenRParen AlexPosn        |
   TokenVar AlexPosn String    |
-  TokenInt AlexPosn Int       
+  TokenInt AlexPosn Int       |
+--  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
@@ -56,5 +58,6 @@ tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+-- tokenPosn (TokenLocalVar (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 
 }
