@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-missing-signatures #-}
 {-# LANGUAGE CPP #-}
-{-# LINE 1 "Tokens.x" #-}
+{-# LINE 1 "tokens.x" #-}
  
 module Tokens where 
 
@@ -6743,7 +6743,7 @@ alex_actions = array (0 :: Int, 30)
   , (0,alex_action_13)
   ]
 
-{-# LINE 28 "Tokens.x" #-}
+{-# LINE 28 "tokens.x" #-}
  
 -- Each action has type :: AlexPosn -> String -> Token 
 
@@ -6760,7 +6760,7 @@ data Token =
   TokenLParen AlexPosn        |
   TokenRParen AlexPosn        |
   TokenVar AlexPosn String    |
-  TokenInt AlexPosn Int       |
+  TokenInt AlexPosn Int       
 --  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
 

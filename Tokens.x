@@ -41,7 +41,7 @@ data Token =
   TokenLParen AlexPosn        |
   TokenRParen AlexPosn        |
   TokenVar AlexPosn String    |
-  TokenInt AlexPosn Int       |
+  TokenInt AlexPosn Int       
 --  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
 
