@@ -18,7 +18,7 @@ tokens :-
   for           { \p s -> TokenFor p }
   \&            { \p s -> TokenAnd p }
   \=            { \p s -> TokenEq p }
-  "!="          { \p s -> TokenNEq p }
+  !=          { \p s -> TokenNEq p }
   \(            { \p s -> TokenLParen p }
   \)            { \p s -> TokenRParen p }
   $digit+       { \p s -> TokenInt p (read s) } 

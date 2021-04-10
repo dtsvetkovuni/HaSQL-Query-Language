@@ -6743,7 +6743,7 @@ alex_actions = array (0 :: Int, 30)
   , (0,alex_action_13)
   ]
 
-{-# LINE 27 "Tokens.x" #-}
+{-# LINE 28 "Tokens.x" #-}
  
 -- Each action has type :: AlexPosn -> String -> Token 
 
@@ -6760,7 +6760,8 @@ data Token =
   TokenLParen AlexPosn        |
   TokenRParen AlexPosn        |
   TokenVar AlexPosn String    |
-  TokenInt AlexPosn Int       
+  TokenInt AlexPosn Int       |
+--  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
@@ -6776,6 +6777,7 @@ tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+-- tokenPosn (TokenLocalVar (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 
 
 alex_action_2 =  \p s -> TokenShow p 
