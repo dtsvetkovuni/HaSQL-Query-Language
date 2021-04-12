@@ -14,8 +14,8 @@ tokens :-
   show          { \p s -> TokenShow p } 
   where         { \p s -> TokenWhere p }
   empty         { \p s -> TokenEmpty p }
-  define        { \p s -> TokenDefine p }
-  for           { \p s -> TokenFor p }
+  use           { \p s -> TokenUse p }
+  from          { \p s -> TokenFrom p }
   \&            { \p s -> TokenAnd p }
   \=            { \p s -> TokenEq p }
   !=            { \p s -> TokenNEq p }
@@ -23,7 +23,8 @@ tokens :-
   \)            { \p s -> TokenRParen p }
   \,            { \p s -> TokenSeparator p }
   $digit+       { \p s -> TokenInt p (read s) } 
-  $alpha [$alpha $digit \_ \’]*   { \p s -> TokenVar p s } 
+  $alpha [$alpha $digit \_ \’]*            { \p s -> TokenVar p s } 
+  [$alpha $digit \_ \’]+                   { \p s -> TokenString p s }
  -- [$alpha $digit \_] [$alpha $digit \’]* { \p s -> TokenLocalVar p s }
 
 { 
@@ -34,8 +35,8 @@ data Token =
   TokenShow AlexPosn          | 
   TokenWhere  AlexPosn        | 
   TokenEmpty AlexPosn         |
-  TokenDefine  AlexPosn       |
-  TokenFor  AlexPosn          |
+  TokenUse  AlexPosn          |
+  TokenFrom  AlexPosn         |
   TokenAnd AlexPosn           |
   TokenEq AlexPosn            |
   TokenNEq AlexPosn           |
@@ -43,6 +44,7 @@ data Token =
   TokenRParen AlexPosn        |
   TokenSeparator AlexPosn     |
   TokenVar AlexPosn String    |
+  TokenString AlexPosn String |
   TokenInt AlexPosn Int       
 --  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
@@ -50,11 +52,12 @@ data Token =
 tokenPosn :: Token -> String
 tokenPosn (TokenInt  (AlexPn a l c) n) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenVar  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenString  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenShow (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenWhere  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenDefine (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenFor (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenUse (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenFrom (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
