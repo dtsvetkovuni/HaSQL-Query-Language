@@ -12,8 +12,8 @@ import Tokens
     empty  { TokenEmpty _ } 
     define { TokenDefine _ }
     for    { TokenFor _ }
-    '&'     { TokenAnd _ }
-    '='     { TokenEq _ }
+    '&'    { TokenAnd _ }
+    '='    { TokenEq _ }
     "!="   { TokenNEq _ }
     '('    { TokenLParen _ } 
     ')'    { TokenRParen _ } 
@@ -30,8 +30,8 @@ Cols : var           { Var $1 }
 Requirements : Requirements '&' Requirements   { And $1 $3 }
      | var '=' var                             { Eq $1 $3 }
      | var "!=" var                            { NEq $1 $3 } 
-     | var '=' empty                            { Empty $1 }
-     | var "!=" empty                            { NotEmpty $1 }
+     | var '=' empty                           { Empty $1 }
+     | var "!=" empty                          { NotEmpty $1 }
      | var '(' Cols ')'                        { Table $1 $3 }
      | define var for Requirements             { Def $2 $4 }
 { 

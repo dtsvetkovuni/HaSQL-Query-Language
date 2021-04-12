@@ -18,9 +18,10 @@ tokens :-
   for           { \p s -> TokenFor p }
   \&            { \p s -> TokenAnd p }
   \=            { \p s -> TokenEq p }
-  !=          { \p s -> TokenNEq p }
+  !=            { \p s -> TokenNEq p }
   \(            { \p s -> TokenLParen p }
   \)            { \p s -> TokenRParen p }
+  \,            { \p s -> TokenSeparator p }
   $digit+       { \p s -> TokenInt p (read s) } 
   $alpha [$alpha $digit \_ \’]*   { \p s -> TokenVar p s } 
  -- [$alpha $digit \_] [$alpha $digit \’]* { \p s -> TokenLocalVar p s }
@@ -40,6 +41,7 @@ data Token =
   TokenNEq AlexPosn           |
   TokenLParen AlexPosn        |
   TokenRParen AlexPosn        |
+  TokenSeparator AlexPosn     |
   TokenVar AlexPosn String    |
   TokenInt AlexPosn Int       
 --  TokenLocalVar AlexPosn String
@@ -58,6 +60,7 @@ tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenSeparator (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 -- tokenPosn (TokenLocalVar (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 
 }
