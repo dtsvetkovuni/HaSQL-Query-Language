@@ -309,21 +309,18 @@ data Requirement = Table String ColumnList
       | NotEmpty String
      deriving Show      
 
-data E a = Ok a | Failed String
-
 type RequirementList = [Requirement]
 type ColumnList = [Column]
 
 
-
 --------------------error handling from 2.5.1----------------
 
+data E a = Ok a | Failed String
 
 thenE :: E a -> (a -> E b) -> E b
-m `thenE` k = 
-   case m of 
-       Ok a -> k a
-	 Failed e -> Failed e
+m `thenE` k = case m of 
+     Ok a -> k a
+     Failed e -> Failed e
 
 returnE :: a -> E a
 returnE a = Ok a
@@ -332,10 +329,9 @@ failE :: String -> E a
 failE err = Failed err
 
 catchE :: E a -> (String -> E a) -> E a
-catchE m k = 
-   case m of
-      Ok a -> OK a
-	Failed e -> k e
+catchE m k = case m of
+    Ok a -> Ok a
+    Failed e -> k e
 
 parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 

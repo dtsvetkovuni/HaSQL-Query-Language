@@ -34,9 +34,6 @@ Exp : show '(' BoundVars ')' where RequirementList  { FinalExp  $3 $6 }
 BoundVars : var ',' BoundVars    { $1:$3 }
      | var                       { [$1] }
 
---Vars : var                   { Variable $1}
---     | '"' str '"'           { Constants $2 }
-
 ColumnList : Column ',' ColumnList     { $1:$3 }
      | Column                          { [$1] }
 
@@ -53,6 +50,9 @@ Requirement : str '(' ColumnList ')'           { Table $1 $3 }
      | var "!=" empty                          { NotEmpty $1 }
 --     | var '=' '"' str '"'                     { EqConst $1 $4 }
 --     | var "!=" '"' str '"'                    { NEqConst $1 $4 }
+
+--Vars : var                   { Variable $1}
+--     | '"' str '"'           { Constants $2 }
 
 { 
 
@@ -76,16 +76,15 @@ type RequirementList = [Requirement]
 type ColumnList = [Column]
 
 
-
 --------------------error handling from 2.5.1----------------
+--fixed spacing error on case of and fixed 'Ok'
 
 data E a = Ok a | Failed String
 
 thenE :: E a -> (a -> E b) -> E b
-m `thenE` k = 
-   case m of 
-       Ok a -> k a
-	 Failed e -> Failed e
+m `thenE` k = case m of 
+     Ok a -> k a
+     Failed e -> Failed e
 
 returnE :: a -> E a
 returnE a = Ok a
@@ -94,10 +93,9 @@ failE :: String -> E a
 failE err = Failed err
 
 catchE :: E a -> (String -> E a) -> E a
-catchE m k = 
-   case m of
-      Ok a -> OK a
-	Failed e -> k e
+catchE m k = case m of
+    Ok a -> Ok a
+    Failed e -> k e
 
 parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 

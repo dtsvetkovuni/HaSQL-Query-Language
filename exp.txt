@@ -80,3 +80,8 @@ catchE m k =
    case m of
       Ok a -> OK a
 	Failed e -> k e
+
+parseError :: [Token] -> a
+parseError [] = error "Unknown Parse Error" 
+parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
+parseError tokens = failE "Parse error"
