@@ -1,6 +1,6 @@
 { 
 module Grammar where 
-import Tokens 
+import Lexer 
 }
 
 %name parseCalc 
@@ -13,11 +13,13 @@ import Tokens
     use    { TokenUse _ }
     from   { TokenFrom _ }
     '&'    { TokenAnd _ }
+    '_'    { TokenSkip _ }
     '='    { TokenEq _ }
     "!="   { TokenNEq _ }
     '('    { TokenLParen _ } 
     ')'    { TokenRParen _ } 
     ','    { TokenSeparator _ }
+    '"'    { TokenQuote _ }
     var    { TokenVar _ $$}
     str    { TokenString _ $$ }
  --   localVar  { TokenLocalVar _ $$}
@@ -26,46 +28,49 @@ import Tokens
 %left '&' 
 %% 
 
-Exp : show '(' BoundVars ')' from Tables where Requirements { FinalExp  $3 $7 $10 $12 } 
+Exp : show '(' BoundVars ')' where RequirementsList  { FinalExp  $3 $6 }
 
---vars vars everywhere
---var here var there it is vary good
+BoundVars : var ',' BoundVars    { $1:$3 }
+     | var                       { [$1] }
 
-BoundVars : var              { BoundVar $1 }
-     | var ',' BoundVars     { BoundCols $1 $3 }
-     | def
+--Vars : var                   { Variable $1}
+--     | '"' str '"'           { Constants $2 }
 
-FreeVars : var               { FreeVar $1 }
-     | var ',' FreeVars      { FreeCols $1 $3 }   
+ColumnsList : Column ',' ColumnsList { $1:$3 }
+     | Column                        { [$1] }
 
-Cols : var                   { Var $1 }
-     | var ',' Cols          { AllCols $1 $3 } 
+Column : var                   { Var $1 }
+     | '_'                     { SkipVar }
 
-Tables : var '(' Cols ')'           { Table $1 $3}
-     | var '(' Cols ')' ',' Tables  { Tables $1 $3}
+RequirementsList : RequirementsList '&' RequirementsList { $1:$3 }
+     | Requirement { [$1] }
 
-Requirements : Requirements '&' Requirements   { And $1 $3 }
+Requirement : str '(' Column ')'                 { Table $1 $3 }
      | var '=' var                             { Eq $1 $3 }
      | var "!=" var                            { NEq $1 $3 } 
      | var '=' empty                           { Empty $1 }
      | var "!=" empty                          { NotEmpty $1 }
+--     | var '=' '"' str '"'                     { EqConst $1 $4 }
+--     | var "!=" '"' str '"'                    { NEqConst $1 $4 }
 
 { 
 parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
-data Exp = FinalExp Cols Requirements
+data Exp = FinalExp Column RequirementsList
      deriving Show
 
 
-data Cols = Var String 
-      | ListCols String Cols
+data Columnls = Var String 
+      | ListColumn String Column
 
-data Requirements = And Requirements Requirements
+data Requirement = And Requirement RequirementsList
       | Eq String String
       | NEq String String
       | Empty String
       | NotEmpty String
      deriving Show      
+
+data RequirementsList = [Requirement]
 } 
