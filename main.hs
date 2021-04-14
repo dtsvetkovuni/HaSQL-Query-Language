@@ -1,5 +1,5 @@
 import Data.List
-import Tokens ( alexScanTokens )
+import Lexer ( alexScanTokens )
 import System.Environment ( getArgs )
 import Control.Exception ( catch, ErrorCall )
 import System.IO

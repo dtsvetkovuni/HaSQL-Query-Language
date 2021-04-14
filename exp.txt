@@ -3,7 +3,12 @@ let x = 34 in x + 17^C
 take Names from Belejnici
 remove Empty from Belejnici
 
+select x1 x2 x3 x4 where exists z2 in exists z3 in exists z4 in A(x1 x2 x3 x4) and B(x1 z2 z3 z4)
 
+
+select x1 x2 cont(afsfa) x3 const(145t435tryh)
+
+x1!=const(e2rtrwee)
 
 
 select x1 x2 where exists z in A (x1 z) and B (z x2);
