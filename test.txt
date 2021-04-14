@@ -1,1 +1,5 @@
-show col1 = empty ( 213 ) for define != where
+show (x1,x2) 
+where A(x1,x2)
+& x1=x2 
+& x1=Empty
+& x2="123123"
