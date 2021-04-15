@@ -25,7 +25,7 @@ happyExpList = Happy_Data_Array.listArray (0,47) ([512,32768,0,4096,0,0,2048,327
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_calc","Exp","BoundVars","ColumnList","Column","RequirementList","Requirement","show","where","empty","'&'","'_'","'='","\"!=\"","'('","')'","','","var","str","%eof"]
+  where token_strs = ["error","%dummy","%start_queryLang","Exp","BoundVars","ColumnList","Column","RequirementList","Requirement","show","where","empty","'&'","'_'","'='","\"!=\"","'('","')'","','","var","str","%eof"]
         bit_start = st Prelude.* 22
         bit_end = (st Prelude.+ 1) Prelude.* 22
         read_bit = readArrayBit happyExpList
@@ -278,16 +278,30 @@ happyNewToken action sts stk (tk:tks) =
 happyError_ explist 22 tk tks = happyError' (tks, explist)
 happyError_ explist _ tk tks = happyError' ((tk:tks), explist)
 
-happyThen :: () => E a -> (a -> E b) -> E b
-happyThen = (thenE)
-happyReturn :: () => a -> E a
-happyReturn = (returnE)
-happyThen1 m k tks = (thenE) m (\a -> k a tks)
-happyReturn1 :: () => a -> b -> E a
-happyReturn1 = \a tks -> (returnE) a
-happyError' :: () => ([(Token)], [Prelude.String]) -> E a
-happyError' = (\(tokens, _) -> parseError tokens)
-calc tks = happySomeParser where
+newtype HappyIdentity a = HappyIdentity a
+happyIdentity = HappyIdentity
+happyRunIdentity (HappyIdentity a) = a
+
+instance Prelude.Functor HappyIdentity where
+    fmap f (HappyIdentity a) = HappyIdentity (f a)
+
+instance Applicative HappyIdentity where
+    pure  = HappyIdentity
+    (<*>) = ap
+instance Prelude.Monad HappyIdentity where
+    return = pure
+    (HappyIdentity p) >>= q = q p
+
+happyThen :: () => HappyIdentity a -> (a -> HappyIdentity b) -> HappyIdentity b
+happyThen = (Prelude.>>=)
+happyReturn :: () => a -> HappyIdentity a
+happyReturn = (Prelude.return)
+happyThen1 m k tks = (Prelude.>>=) m (\a -> k a tks)
+happyReturn1 :: () => a -> b -> HappyIdentity a
+happyReturn1 = \a tks -> (Prelude.return) a
+happyError' :: () => ([(Token)], [Prelude.String]) -> HappyIdentity a
+happyError' = HappyIdentity Prelude.. (\(tokens, _) -> parseError tokens)
+queryLang tks = happyRunIdentity happySomeParser where
  happySomeParser = happyThen (happyParse action_0 tks) (\x -> case x of {HappyAbsSyn4 z -> happyReturn z; _other -> notHappyAtAll })
 
 happySeq = happyDontSeq
@@ -295,48 +309,29 @@ happySeq = happyDontSeq
 
 ---------------------DATA TYPES---------------------------
 
-data Exp = FinalExp ColumnList RequirementList
-     deriving Show
+data Exp = FinalExp [String] RequirementList
+     deriving (Eq,Show) 
 
-data Column = Var String 
+data Column = Var String
       | SkipVar
-      deriving Show
+     deriving (Eq,Show) 
 
 data Requirement = Table String ColumnList
       | Eq String String
       | NEq String String
       | Empty String
       | NotEmpty String
-     deriving Show      
+     deriving (Eq,Show)      
 
 type RequirementList = [Requirement]
 type ColumnList = [Column]
 
 
---------------------error handling from 2.5.1----------------
-
-data E a = Ok a | Failed String
-
-thenE :: E a -> (a -> E b) -> E b
-m `thenE` k = case m of 
-     Ok a -> k a
-     Failed e -> Failed e
-
-returnE :: a -> E a
-returnE a = Ok a
-
-failE :: String -> E a
-failE err = Failed err
-
-catchE :: E a -> (String -> E a) -> E a
-catchE m k = case m of
-    Ok a -> Ok a
-    Failed e -> k e
 
 parseError :: [Token] -> a
 parseError [] = error "Unknown Parse Error" 
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
-parseError tokens = failE "Parse error"
+parseError tokens = error "Parse error"
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 -- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
 

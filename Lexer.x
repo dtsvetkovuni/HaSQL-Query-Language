@@ -22,10 +22,9 @@ tokens :-
   \)            { \p s -> TokenRParen p }
   \,            { \p s -> TokenSeparator p }
   \"            { \p s -> TokenQuote p }
-  $alpha [$alpha $digit \_ \’]*            { \p s -> TokenVar p s } 
-  $alpha $digit \_ \’+                     { \p s -> TokenString p s }
-  $digit+       { \p s -> TokenInt p (read s) } 
- -- [$alpha $digit \_] [$alpha $digit \’]* { \p s -> TokenLocalVar p s }
+  $alpha [$alpha $digit \_ \’]*               { \p s -> TokenVar p s } 
+  \" [$alpha $digit \_ \’]* \"                { \p s -> TokenString p s }
+  $digit+                                     { \p s -> TokenInt p (read s) } 
 
 { 
 -- Each action has type :: AlexPosn -> String -> Token 
@@ -46,24 +45,22 @@ data Token =
   TokenVar AlexPosn String    |
   TokenString AlexPosn String |
   TokenInt AlexPosn Int       
---  TokenLocalVar AlexPosn String
   deriving (Eq,Show) 
 
 tokenPosn :: Token -> String
-tokenPosn (TokenInt  (AlexPn a l c) n) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenVar  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenString  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenShow (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenWhere  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenSkip (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenSeparator (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
-tokenPosn (TokenQuote (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
--- tokenPosn (TokenLocalVar (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenInt  (AlexPn a l c) n) = show(l) ++ ":" ++ show(c) ++ " With int " ++ show n
+tokenPosn (TokenVar  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c) ++ " With Variable " ++ x
+tokenPosn (TokenString  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c) ++ " With String " ++ x
+tokenPosn (TokenShow (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "show"
+tokenPosn (TokenWhere  (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "where"
+tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "empty"
+tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "&"
+tokenPosn (TokenSkip (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "_"
+tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "="
+tokenPosn (TokenNEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "!="
+tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "("
+tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ ")"
+tokenPosn (TokenSeparator (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ ","
+tokenPosn (TokenQuote (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "\""
 
 }
