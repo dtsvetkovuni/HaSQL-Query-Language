@@ -1,3 +1,7 @@
 Strings use " "
 file names specify name with " " without the .csv extention 
 example "TableA" (x1 x2 x3) 
+
+
+
+to read csv file say: fileReadCsv "\"test\""

@@ -1,10 +1,13 @@
 module Interpreter where
 import Lexer
 import Grammar
+import CSV_Reader
 import System.Environment
 import Control.Exception
 import System.IO
 
+
+Data 
 
 main :: IO ()
 main = catch main' noLex
@@ -19,3 +22,10 @@ noLex :: ErrorCall -> IO ()
 noLex e = do let err =  show e
              hPutStr stderr ("Problem with Lexing : " ++ err)
              return ()
+
+
+eval1
+
+
+evalRequirements (Table str ) = 
+

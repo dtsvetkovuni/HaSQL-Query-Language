@@ -1,35 +1,39 @@
+module CSV_Reader where
 import Control.Exception
 import System.IO
-import Data.List
+import Data.Char
+--import Data.Text
+import System.Directory
 
-fileMZip :: String -> Int -> IO ()
-fileMZip str n = catch ( fileMZip' str n ) filehandler
+fileReadCsv :: String -> IO [[String]]
+fileReadCsv str = do
+  b <- doesFileExist st
+  if b then (do read) else error ("Error - CSV file name \"" ++ st ++ "\" not found!")  -- error check if file is not found
+      where st = removeQuotes str ++ ".csv"                                               -- removes quotes from parsing and adds .csv
+            b = doesFileExist st
+            read = fileReadCsv' st
 
-filehandler :: IOException -> IO ()
-filehandler e = do let errMsg = show (e :: IOException)
-                   hPutStr stderr ("Warning - File not found : " ++ errMsg)
-                   return ()
+fileReadCsv' :: String -> IO [[String]]
+fileReadCsv' str = do
+  text <- readFile str
+  let ls = lines text
+  let cells = map (splitOn ',') ls
+  let nowhitespace = map (map removeWhitespace) cells
+  return nowhitespace
 
-multiZipL :: [[a]] -> [[a]]
-multiZipL [] = []
-multiZipL ([] : xss) = multiZipL xss
-multiZipL ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : multiZipL (xs : [ t | (_:t) <- xss])
+--"example" -> example
+removeQuotes :: String -> String
+removeQuotes str = drop 1 (take (length str-1) str)
 
-fileMZip' :: String -> Int -> IO ()
-fileMZip' str n = do
-  s <- readFile (str ++ ".csv")
-  let ls = lines s
-  let sss = map (splitOn ',') ls
---  let iss = map (map read) sss :: [[Int]]
-  let mss = multiZipL sss
---  let oss = map (map show) mss
-  let css = intercalate "\n" (map (intercalate ",") mss)
-  writeFile "testout.csv" css
-  
+--"   example    " -> "example"
+removeWhitespace :: String -> String
+removeWhitespace str = reverse (dropWhile isSpace (reverse (dropWhile isSpace str)))
+
+--SplitOn function from lectures
 splitOn :: Char -> String -> [String]
 splitOn c [] = []
 splitOn c ls = takeWhile (/=c) ls : splitOn' c (dropWhile (/=c) ls)
- where splitOn' c [] = []
-       splitOn' c [x] | x==c = [[]]
-       splitOn' c (x:xs) | x==c = splitOn c xs
-                         | otherwise = []
+  where splitOn' c [] = []
+        splitOn' c [x] | x==c = [[]]
+        splitOn' c (x:xs) | x==c = splitOn c xs
+                          | otherwise = []

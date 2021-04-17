@@ -174,3 +174,53 @@ tokenPosn (TokenLParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " +
 tokenPosn (TokenRParen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ ")"
 tokenPosn (TokenSeparator (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ ","
 tokenPosn (TokenQuote (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ """
+
+
+
+
+
+
+-----------------------------FIleReader--------------------------------
+fileMZip :: String -> Int -> IO ()
+fileMZip str n = catch ( fileMZip' str n ) filehandler
+
+filehandler :: IOException -> IO ()
+filehandler e = do let errMsg = show (e :: IOException)
+                   hPutStr stderr ("Warning - File not found : " ++ errMsg)
+                   return ()
+
+multiZipL :: [[a]] -> [[a]]
+multiZipL [] = []
+multiZipL ([] : xss) = multiZipL xss
+multiZipL ((x:xs) : xss) = (x : [h | (h:_) <- xss]) : multiZipL (xs : [ t | (_:t) <- xss])
+
+fileMZip' :: String -> Int -> IO ()
+fileMZip' str n = do
+  s <- readFile (str ++ ".csv")
+  let ls = lines s
+  let sss = map (splitOn ',') ls
+--  let iss = map (map read) sss :: [[Int]]
+  let mss = multiZipL sss
+--  let oss = map (map show) mss
+  let css = intercalate "\n" (map (intercalate ",") mss)
+  writeFile "testout.csv" css
+  
+splitOn :: Char -> String -> [String]
+splitOn c [] = []
+splitOn c ls = takeWhile (/=c) ls : splitOn' c (dropWhile (/=c) ls)
+ where splitOn' c [] = []
+       splitOn' c [x] | x==c = [[]]
+       splitOn' c (x:xs) | x==c = splitOn c xs
+                         | otherwise = []
+
+
+
+
+--SplitOn function from lectures used in Data.List.Split
+splitOn :: Char -> String -> [String]
+splitOn c [] = []
+splitOn c ls = takeWhile (/=c) ls : splitOn' c (dropWhile (/=c) ls)
+ where splitOn' c [] = []
+       splitOn' c [x] | x==c = [[]]
+       splitOn' c (x:xs) | x==c = splitOn c xs
+                         | otherwise = []
