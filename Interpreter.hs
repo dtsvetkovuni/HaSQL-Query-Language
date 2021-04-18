@@ -36,14 +36,17 @@ evalColumn :: Column -> String
 evalColumn (Var str) = str
 evalColumn (SkipVar) = []
 
--- evalRequirementList :: RequirementList -> 
+-- evalRequirementList :: RequirementList -> [Row]
 evalRequirementList rs = [evalRequirement r |r <- rs ]
 
 
---evalRequirement :: Requirement -> 
+--evalRequirement :: Requirement -> [Row]
+-- tova nqma da stane s pattern matching
+-- zashtoto table-a vrushta drug type
 evalRequirement(Table name clms) = do
-    cells <- fileReadCsv name
+    file <- fileReadCsv (name++".csv")
 
+    
 
 evalRequirement(Eq f s) =
 
@@ -53,9 +56,11 @@ evalRequirement(Empty s) =
 
 evalRequirement(NotEmpty s) =
 
-
-
-
+-- This is the data type for assigned values to variables
+--           varName, value
+data Row = [(String,String)]
+data File = [Row]
+-- Bazingaringa
 
 evalExp :: [String] -> RequirementList -> IO [[String]]
 evalExp bvs rs = do
@@ -77,7 +82,7 @@ noLex e = do let err =  show e
              return ()
 
 
-eval1
+--eval1
 
 
 evalRequirements (Table str ) = 
