@@ -13,11 +13,16 @@ import System.IO
 --      | SkipVar
 --     deriving (Eq,Show) 
 --
+--data Assignment = AsignVarVar String String
+--      | AsignVarStr String String
+--     deriving (Eq,Show)  
+--
 --data Requirement = Table String ColumnList
 --      | Eq String String
 --      | NEq String String
 --      | Empty String
 --      | NotEmpty String
+--      | IfTF RequirementList Assignment Assignment
 --     deriving (Eq,Show)      
 --
 --type RequirementList = [Requirement]
