@@ -14,6 +14,10 @@ tokens :-
   show          { \p s -> TokenShow p } 
   where         { \p s -> TokenWhere p }
   empty         { \p s -> TokenEmpty p }
+  if            { \p s -> TokenIf p }
+  then          { \p s -> TokenThen p }
+  else          { \p s -> TokenElse p }
+  "<-"          { \p s -> TokenAssign p }
   \&            { \p s -> TokenAnd p }
   \_            { \p s -> TokenSkip p }
   \=            { \p s -> TokenEq p }
@@ -34,6 +38,10 @@ data Token =
   TokenShow AlexPosn          | 
   TokenWhere  AlexPosn        | 
   TokenEmpty AlexPosn         |
+  TokenIf AlexPosn            |
+  TokenThen AlexPosn          |
+  TokenElse AlexPosn          |
+  TokenAssign AlexPosn        |
   TokenAnd AlexPosn           |
   TokenSkip AlexPosn          |
   TokenEq AlexPosn            |
@@ -50,10 +58,14 @@ data Token =
 tokenPosn :: Token -> String
 tokenPosn (TokenInt  (AlexPn a l c) n) = show(l) ++ ":" ++ show(c) ++ " With int " ++ show n
 tokenPosn (TokenVar  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c) ++ " With Variable " ++ x
-tokenPosn (TokenString  (AlexPn a l c) x) = show(l) ++ ":" ++ show(c) ++ " With String " ++ x
+tokenPosn (TokenString (AlexPn a l c) x) = show(l) ++ ":" ++ show(c) ++ " With String " ++ x
 tokenPosn (TokenShow (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "show"
-tokenPosn (TokenWhere  (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "where"
-tokenPosn (TokenEmpty  (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "empty"
+tokenPosn (TokenWhere (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "where"
+tokenPosn (TokenEmpty (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "empty"
+tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "if"
+tokenPosn (TokenThen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "then"
+tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "else"
+tokenPosn (TokenAssign (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "<-"
 tokenPosn (TokenAnd (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "&"
 tokenPosn (TokenSkip (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "_"
 tokenPosn (TokenEq (AlexPn a l c)) = show(l) ++ ":" ++ show(c) ++ " With " ++ "="

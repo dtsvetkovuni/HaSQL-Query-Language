@@ -40,7 +40,7 @@ evalColumn (SkipVar) = []
 evalRequirementList rs = [evalRequirement r |r <- rs ]
 
 
---evalRequirement :: Requirement -> [Row]
+--evalRequirement :: Requirement -> 
 -- tova nqma da stane s pattern matching
 -- zashtoto table-a vrushta drug type
 evalRequirement(Table name clms) = do

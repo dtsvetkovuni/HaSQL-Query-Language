@@ -10,6 +10,10 @@ import Lexer
     show   { TokenShow _ } 
     where  { TokenWhere _ } 
     empty  { TokenEmpty _ } 
+    if     { TokenIf _ }
+    then   { TokenThen _ }
+    else   { TokenElse _ }
+    "<-"   { TokenAssign _ }
     '&'    { TokenAnd _ }
     '_'    { TokenSkip _ }
     '='    { TokenEq _ }
@@ -40,6 +44,9 @@ ColumnList : Column ',' ColumnList     { $1:$3 }
 Column : var                   { Var $1 }
      | '_'                     { SkipVar }
 
+Assignment : var "<-" var      { AsignVarVar $1 $3 }
+     | var "<-" str            { AsignVarStr $1 $3 }
+
 RequirementList : Requirement '&' RequirementList { $1:$3 }
      | Requirement { [$1] }
 
@@ -48,6 +55,7 @@ Requirement : str '(' ColumnList ')'           { Table $1 $3 }
      | var "!=" var                            { NEq $1 $3 } 
      | var '=' empty                           { Empty $1 }
      | var "!=" empty                          { NotEmpty $1 }
+     | if '(' RequirementList ')' then '(' Assignment ')' else '(' Assignment ')'  { IfTF $3 $7 $11 }
 --     | var '=' str                     { EqConst $1 $4 }
 --     | var "!=" str                    { NEqConst $1 $4 }
 
@@ -65,11 +73,16 @@ data Column = Var String
       | SkipVar
      deriving (Eq,Show) 
 
+data Assignment = AsignVarVar String String
+      | AsignVarStr String String
+     deriving (Eq,Show)  
+
 data Requirement = Table String ColumnList
       | Eq String String
       | NEq String String
       | Empty String
       | NotEmpty String
+      | IfTF RequirementList Assignment Assignment
      deriving (Eq,Show)      
 
 type RequirementList = [Requirement]
