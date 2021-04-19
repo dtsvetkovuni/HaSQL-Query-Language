@@ -13,14 +13,12 @@ import System.IO
 --      | SkipVar
 --     deriving (Eq,Show) 
 --
---Requirement : str '(' ColumnList ')'           { Table $1 $3 }
---     | var '=' var                             { Eq $1 $3 }
---     | var "!=" var                            { NEq $1 $3 } 
---     | var '=' empty                           { Empty $1 }
---     | var "!=" empty                          { NotEmpty $1 }
---     | var "<-" var                            { AsignVarVar $1 $3 }
---     | var "<-" str                            { AsignVarStr $1 $3 }
---     | if '(' RequirementList ')' then '(' RequirementList ')' else '(' RequirementList ')'  { IfTF $3 $7 $11 }  
+--data Requirement = Table String ColumnList
+--      | Eq String String
+--      | NEq String String
+--      | Empty String
+--      | NotEmpty String
+--     deriving (Eq,Show)      
 --
 --type RequirementList = [Requirement]
 --type ColumnList = [Column]
@@ -47,6 +45,7 @@ evalRequirementList (r:rs) currentFile = evalRequirementList rs result
 evalRequirement :: Requirement -> IO File -> IO File
 evalRequirement (Table name clms) currentFile = do
     file <- fileReadCsv (name++".csv")
+
 -- do conjunction here
     
 -- filter all in the currentFile
@@ -68,24 +67,21 @@ evalRequirement (IfTF rle rlt rlf)
 
 --TODO:
 
--- Eval Tables
+-- eval requirements (Eq NEq Empty notEmpty)
 
---Eval Constraints
+-- eval Table (conjunction)
 
---Eval ifs
+-- eval if requirements
 
---
+-- get/assign Value function
 
+-- print function?
 
-
-
-
-
+-- matching names function 
 
 
 
-getTables :: RequirementList -> RequirementList
-getTables ()
+
 
 
 -- This is the data type for assigned values to variables
