@@ -17,13 +17,14 @@ import System.IO
 --      | AsignVarStr String String
 --     deriving (Eq,Show)  
 --
---data Requirement = Table String ColumnList
---      | Eq String String
---      | NEq String String
---      | Empty String
---      | NotEmpty String
---      | IfTF RequirementList Assignment Assignment
---     deriving (Eq,Show)      
+--Requirement : str '(' ColumnList ')'           { Table $1 $3 }
+--     | var '=' var                             { Eq $1 $3 }
+--     | var "!=" var                            { NEq $1 $3 } 
+--     | var '=' empty                           { Empty $1 }
+--     | var "!=" empty                          { NotEmpty $1 }
+--     | var "<-" var                            { AsignVarVar $1 $3 }
+--     | var "<-" str                            { AsignVarStr $1 $3 }
+--     | if '(' RequirementList ')' then '(' RequirementList ')' else '(' RequirementList ')'  { IfTF $3 $7 $11 }    
 --
 --type RequirementList = [Requirement]
 --type ColumnList = [Column]
@@ -48,18 +49,24 @@ evalRequirementList rs = [evalRequirement r |r <- rs ]
 --evalRequirement :: Requirement -> 
 -- tova nqma da stane s pattern matching
 -- zashtoto table-a vrushta drug type
-evalRequirement(Table name clms) = do
+evalRequirement (Table name clms) = do
     file <- fileReadCsv (name++".csv")
 
     
 
-evalRequirement(Eq f s) =
+evalRequirement (Eq f s) =
 
-evalRequirement(NEq f s) =
+evalRequirement (NEq f s) =
 
-evalRequirement(Empty s) =
+evalRequirement (Empty s) =
 
-evalRequirement(NotEmpty s) =
+evalRequirement (NotEmpty s) =
+
+evalRequirement (IfTF rle rlt rlf)
+   | evaluated = evalRequirement rlt
+   | otherwise = evalRequirement rlf
+      where evaluated = evalRequirementListIF rle
+
 
 -- This is the data type for assigned values to variables
 --           varName, value
