@@ -13,16 +13,11 @@ import System.IO
 --      | SkipVar
 --     deriving (Eq,Show) 
 --
---data Assignment = AsignVarVar String String
---      | AsignVarStr String String
---     deriving (Eq,Show)  
---
 --data Requirement = Table String ColumnList
 --      | Eq String String
 --      | NEq String String
 --      | Empty String
 --      | NotEmpty String
---      | IfTF RequirementList Assignment Assignment
 --     deriving (Eq,Show)      
 --
 --type RequirementList = [Requirement]
@@ -32,7 +27,7 @@ import System.IO
 --FinalExp [x1,x2] [(Table "A" (x1,x2,_)),(Eq x1 x2),(Empty x2)]
 
 evalStart :: Exp -> IO [[String]]
-evalStart (FinalExp bvs rs) = evalExp bvs (evalRequirementList rs)
+evalStart (FinalExp bvs rs) =  evalRequirementsList rs []
 
 evalColumnList :: ColumnList  -> [String]
 evalColumnList clms = [evalColumn c |c <- clms ]
@@ -41,25 +36,55 @@ evalColumn :: Column -> String
 evalColumn (Var str) = str
 evalColumn (SkipVar) = []
 
--- evalRequirementList :: RequirementList -> [Row]
-evalRequirementList rs = [evalRequirement r |r <- rs ]
+-- Eval all requirements
+evalRequirementList :: RequirementList -> IO File -> IO File
+evalRequirementList (r:rs) currentFile = evalRequirementList rs result
+    where result = evalRequirement r currentFile
 
-
---evalRequirement :: Requirement -> 
--- tova nqma da stane s pattern matching
--- zashtoto table-a vrushta drug type
-evalRequirement(Table name clms) = do
+-- Eval requirements 1 by 1
+evalRequirement :: Requirement -> IO File -> IO File
+evalRequirement (Table name clms) currentFile = do
     file <- fileReadCsv (name++".csv")
-
+-- do conjunction here
     
+-- filter all in the currentFile
+evalRequirement (Eq f s) currentFile = 
 
-evalRequirement(Eq f s) =
+evalRequirement (NEq f s) currentFile =
 
-evalRequirement(NEq f s) =
+evalRequirement (Empty s) currentFile =
 
-evalRequirement(Empty s) =
+evalRequirement (NotEmpty s) currentFile =
 
-evalRequirement(NotEmpty s) =
+-- 1 function to evaluate all of if requirements (rle) for each row 
+  -- 1 function to evaluate then and else (if true it evaluates rlt) (if false it evaluates rlf)
+  -- then after the evaluation the function returns the row (either full of values or empty)
+evalRequirement (IfTF rle rlt rlf)
+   | evaluated = evalRequirement rlt
+   | otherwise = evalRequirement rlf
+      where evaluated = evalRequirementListIF rle
+
+--TODO:
+
+-- Eval Tables
+
+--Eval Constraints
+
+--Eval ifs
+
+--
+
+
+
+
+
+
+
+
+
+getTables :: RequirementList -> RequirementList
+getTables ()
+
 
 -- This is the data type for assigned values to variables
 --           varName, value
@@ -90,5 +115,5 @@ noLex e = do let err =  show e
 --eval1
 
 
-evalRequirements (Table str ) = 
+--evalRequirements (Table str ) = 
 
