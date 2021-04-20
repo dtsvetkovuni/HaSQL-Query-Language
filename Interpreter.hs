@@ -13,12 +13,14 @@ import System.IO
 --      | SkipVar
 --     deriving (Eq,Show) 
 --
---data Requirement = Table String ColumnList
---      | Eq String String
---      | NEq String String
---      | Empty String
---      | NotEmpty String
---     deriving (Eq,Show)      
+--Requirement : str '(' ColumnList ')'           { Table $1 $3 }
+--     | var '=' var                             { Eq $1 $3 }
+--     | var "!=" var                            { NEq $1 $3 } 
+--     | var '=' empty                           { Empty $1 }
+--     | var "!=" empty                          { NotEmpty $1 }
+--     | var "<-" var                            { AsignVarVar $1 $3 }
+--     | var "<-" str                            { AsignVarStr $1 $3 }
+--     | if '(' RequirementList ')' then '(' RequirementList ')' else '(' RequirementList ')'  { IfTF $3 $7 $11 }  
 --
 --type RequirementList = [Requirement]
 --type ColumnList = [Column]
