@@ -82,7 +82,18 @@ evalRequirement (IfTF rle rlt rlf)
 
 
 
+checkRequirement :: Requirement -> Row -> Bool
+checkRequirement (Eq v1 v2) row = (fetchVar v1 row) == (fetchVar v2 row) 
+checkRequirement (NEq v1 v2) row = (fetchVar v1 row) /= (fetchVar v2 row) 
+checkRequirement (Empty v1) row = (fetchVar v1 row) == ""
+checkRequirement (NotEmpty v1) row = (fetchVar v1 row) /= "" 
 
+-- function to fetch the value of a variable
+fetchVar :: Var -> Row -> String 
+fetchVar varName [] = ""
+fetchVar varName ((var,val):restOfRow) 
+    | varName == var = val 
+    | otherwise = fetchVar varName restOfRow
 
 -- This is the data type for assigned values to variables
 --           varName, value
