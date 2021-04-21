@@ -28,6 +28,13 @@ import System.IO
 
 --FinalExp [x1,x2] [(Table "A" (x1,x2,_)),(Eq x1 x2),(Empty x2)]
 
+-- This is the data type for assigned values to variables
+--           varName, value
+-- (String,String)   ("x1", "mencho")
+type Row = [(String,String)]
+type File = [Row]
+
+
 evalStart :: Exp -> IO [[String]]
 evalStart (FinalExp bvs rs) =  evalRequirementsList rs []
 
@@ -46,18 +53,13 @@ evalRequirementList (r:rs) currentFile = evalRequirementList rs result
 -- Eval requirements 1 by 1
 evalRequirement :: Requirement -> IO File -> IO File
 evalRequirement (Table name clms) currentFile = do
-    file <- fileReadCsv (name++".csv")
+    file <- fileReadCsv (name++".csv")   -- this is a list of rows
+    let vars = evalColumnList clms 
+        newTable = map (zip vars) file
+    if currentFile == [] 
+        then return newTable
+        else return (conjunctTable currentFile newTable)
 
--- do conjunction here
-    
--- filter all in the currentFile
-evalRequirement (Eq f s) currentFile = 
-
-evalRequirement (NEq f s) currentFile =
-
-evalRequirement (Empty s) currentFile =
-
-evalRequirement (NotEmpty s) currentFile =
 
 -- 1 function to evaluate all of if requirements (rle) for each row 
   -- 1 function to evaluate then and else (if true it evaluates rlt) (if false it evaluates rlf)
@@ -65,15 +67,31 @@ evalRequirement (NotEmpty s) currentFile =
 evalRequirement (IfTF rle rlt rlf)
    | evaluated = evalRequirement rlt
    | otherwise = evalRequirement rlf
-      where evaluated = evalRequirementListIF rle
+      where evaluated = evalRequirementListIF rle 
+
+-- filter all in the currentFile ... works for 
+evalRequirement req currentFile = do
+    return filter (checkRequirement req) currentFile
+
+-- do conjunction here
+conjunctTable ::  File -> File -> File
+conjunctTable [] file2 = []
+conjunctTable file1 [] = file1
+conjunctTable (row:rows) file2 = map (row ++) file2 ++ conjunctTable rows file2
+--                                   concatRow row
+
+
+--concatRow :: Row -> Row -> Row
+--concatRow [] row2 = row2
+--concatRow row1 [] = row1
+--concatRow row1 row2 = row1 ++ row2
+
 
 --TODO:
 
--- eval requirements (Eq NEq Empty notEmpty)
-
 -- eval Table (conjunction)
 
--- eval if requirements
+-- eval if requirements ()
 
 -- get/assign Value function
 
@@ -89,6 +107,7 @@ checkRequirement (Eq v1 v2) row = (fetchVar v1 row) == (fetchVar v2 row)
 checkRequirement (NEq v1 v2) row = (fetchVar v1 row) /= (fetchVar v2 row) 
 checkRequirement (Empty v1) row = (fetchVar v1 row) == ""
 checkRequirement (NotEmpty v1) row = (fetchVar v1 row) /= "" 
+checkRequirement _ row = True
 
 -- function to fetch the value of a variable
 fetchVar :: Var -> Row -> String 
@@ -97,10 +116,7 @@ fetchVar varName ((var,val):restOfRow)
     | varName == var = val 
     | otherwise = fetchVar varName restOfRow
 
--- This is the data type for assigned values to variables
---           varName, value
-data Row = [(String,String)]
-data File = [Row]
+
 -- Bazingaringa
 
 evalExp :: [String] -> RequirementList -> IO [[String]]
