@@ -1,6 +1,7 @@
 import Data.List
 import Lexer
 import Grammar
+import Interpreter
 import System.Environment ( getArgs )
 import Control.Exception ( catch, ErrorCall )
 import System.IO
@@ -8,11 +9,14 @@ import System.IO
 main :: IO ()
 main = catch main' noLex
 
-main' = do (fileName : _ ) <- getArgs 
-           sourceText <- readFile fileName
-           putStrLn ("Lexing : " ++ sourceText)
+main' :: IO ()
+main' = do fileName <- getArgs 
+           sourceText <- readFile (head fileName)
+--           putStrLn ("Lexing : " ++ sourceText)
            let lexedProg = queryLang (alexScanTokens sourceText)
-           putStrLn ("Lexed as " ++ (show lexedProg))
+           result <- evalStart lexedProg
+           putStrLn result
+--           putStrLn ("Lexed as " ++ (show lexedProg))
 
 noLex :: ErrorCall -> IO ()
 noLex e = do let err =  show e

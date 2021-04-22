@@ -34,6 +34,7 @@ import Data.List
 type Row = [(String,String)]
 type File = [Row]
 
+EqConst String String
 
 evalStart :: Exp -> IO String
 evalStart (FinalExp bvs rs) =do
@@ -49,6 +50,9 @@ evalColumn SkipVar = []
 
 -- Eval all requirements
 evalRequirementList :: RequirementList -> File -> IO File
+evalRequirementList [] currentFile = do return currentFile
+evalRequirementList [r] currentFile = do
+    evalRequirement r currentFile
 evalRequirementList (r:rs) currentFile = do
     result <- evalRequirement r currentFile
     evalRequirementList rs result
@@ -57,7 +61,7 @@ evalRequirementList (r:rs) currentFile = do
 -- Eval requirements 1 by 1
 evalRequirement :: Requirement -> File -> IO File
 evalRequirement (Table name clms) currentFile = do
-    file <- fileReadCsv (name++".csv")   -- this is a list of rows
+    file <- fileReadCsv (name)   -- this is a list of rows
     let vars = evalColumnList clms
         newTable = map (zip vars) file
     if null currentFile
@@ -76,7 +80,7 @@ evalRequirement (AsignVarStr v1 s1) currentFile = do
     return (map (setVarStr v1 s1) currentFile)
 
 evalRequirement (AsignVarVar v1 v2) currentFile = do
-    return (map (setVarStr v1 v2) currentFile)
+    return (map (setVarVar v1 v2) currentFile)
 
 -- filter all in the currentFile ... works for 
 evalRequirement req currentFile = do
@@ -139,6 +143,8 @@ applyIf ((NEqConst v1 v2):reqs) row
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
 applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 (fetchVar v2 row) row)
+--    where noQuotesV2 = removeQuotes v2
+
 applyIf _ row = error "faulty input in If statement :("
 
 
@@ -154,8 +160,9 @@ fetchVar varName ((var,val):restOfRow)
 setVarStr :: String -> String -> Row -> Row
 setVarStr _ _ [] = []
 setVarStr changeVar newVal ((var,val):rows)
-    | var == changeVar = (var,newVal) : setVarStr changeVar newVal rows
+    | var == changeVar = (var,removeQuotes newVal) : setVarStr changeVar newVal rows
     | otherwise = (var,val) : setVarStr changeVar newVal rows
+--       where noQuotesNewVal = removeQuotes newVal
 
 --           var        var
 setVarVar :: String -> String -> Row -> Row
@@ -168,8 +175,8 @@ setVarVar changeVar searchVar ((var,val):row)
 checkRequirement :: Requirement -> Row -> Bool
 checkRequirement (Eq v1 v2) row = (fetchVar v1 row) == (fetchVar v2 row)
 checkRequirement (NEq v1 v2) row = (fetchVar v1 row) /= (fetchVar v2 row)
-checkRequirement (EqConst v1 v2) row = (fetchVar v1 row) == v2
-checkRequirement (NEqConst v1 v2) row = (fetchVar v1 row) /= v2
+checkRequirement (EqConst v1 v2) row = (fetchVar v1 row) == removeQuotes v2
+checkRequirement (NEqConst v1 v2) row = (fetchVar v1 row) /= removeQuotes v2
 checkRequirement _ row = True
 
 
