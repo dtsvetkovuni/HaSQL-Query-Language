@@ -165,9 +165,9 @@ setVarStr changeVar newVal ((var,val):rows)
 --           var        var
 setVarVar :: String -> String -> Row -> Row
 setVarVar _ _ [] = []
-setVarVar changeVar searchVar ((var,val):row)
-    | var == searchVar = setVarStr changeVar val row
-    | otherwise = setVarVar changeVar searchVar row
+setVarVar changeVar searchVar rowss@((var,val):rows)
+    | var == searchVar = setVarStr changeVar val rowss
+    | otherwise = setVarVar changeVar searchVar rows
 
 
 checkRequirement :: Requirement -> Row -> Bool
