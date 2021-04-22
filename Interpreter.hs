@@ -34,8 +34,6 @@ import Data.List
 type Row = [(String,String)]
 type File = [Row]
 
-EqConst String String
-
 evalStart :: Exp -> IO String
 evalStart (FinalExp bvs rs) =do
     evaluated <- evalRequirementList rs []
@@ -73,7 +71,7 @@ evalRequirement (Table name clms) currentFile = do
 -- calls to completeIf function to evaluate then and else (if true it evaluates rlt) (if false it evaluates rlf)
 -- then after the evaluation the function returns the row (either full of values or empty)
 evalRequirement (IfTF rle rlt rlf) currentFile = do
-    let result = (completeIf rle rlt rlf currentFile)
+    let result = completeIf rle rlt rlf currentFile
     return result
 
 evalRequirement (AsignVarStr v1 s1) currentFile = do
@@ -129,16 +127,16 @@ applyIf :: [Requirement] -> Row -> Row
 applyIf [] row = row
 applyIf ((Eq v1 v2):reqs) row
     | checkRequirement (Eq v1 v2) row = applyIf reqs row
-    | otherwise = []
+    | otherwise = row
 applyIf ((NEq v1 v2):reqs) row
     | checkRequirement (NEq v1 v2) row = applyIf reqs row
-    | otherwise = []
+    | otherwise = row
 applyIf ((EqConst v1 v2):reqs) row
     | checkRequirement (EqConst v1 v2) row = applyIf reqs row
-    | otherwise = []
+    | otherwise = row
 applyIf ((NEqConst v1 v2):reqs) row
     | checkRequirement (NEqConst v1 v2) row = applyIf reqs row
-    | otherwise = []
+    | otherwise = row
 
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
