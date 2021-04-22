@@ -73,6 +73,10 @@ evalRequirement (IfTF rle rlt rlf) currentFile = do
     let result = (completeIf rle rlt rlf currentFile)
     return result
 
+evalRequirement (IfT rle rlt) currentFile = do
+    let result = (completeIf rle rlt [] currentFile)
+    return result
+
 evalRequirement (AsignVarStr v1 s1) currentFile = do
     return (map (setVarStr v1 s1) currentFile)
 
@@ -140,7 +144,7 @@ applyIf ((NEqConst v1 v2):reqs) row
 
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
-applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 (fetchVar v2 row) row)
+applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 v2 row)
 applyIf _ row = error "faulty input in If statement :("
 
 
@@ -160,6 +164,7 @@ setVarStr changeVar newVal ((var,val):rows)
     | otherwise = (var,val) : setVarStr changeVar newVal rows
 
 --           var        var
+setVarVar :: String -> String -> Row -> Row
 setVarVar _ _ [] = []
 setVarVar changeVar searchVar rowss@((var,val):rows)
     | var == changeVar = (var, fetchVar searchVar rowss) : setVarVar changeVar searchVar rows

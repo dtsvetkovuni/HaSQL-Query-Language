@@ -176,7 +176,7 @@ action_40 (21) = happyShift action_41
 action_40 _ = happyFail (happyExpListPerState 40)
 
 action_41 (14) = happyShift action_42
-action_41 _ = happyFail (happyExpListPerState 41)
+action_41 _ = happyReduce_18
 
 action_42 (20) = happyShift action_43
 action_42 _ = happyFail (happyExpListPerState 42)
@@ -348,6 +348,20 @@ happyReduction_17 (_ `HappyStk`
 		 (IfTF happy_var_3 happy_var_7 happy_var_11
 	) `HappyStk` happyRest
 
+happyReduce_18 = happyReduce 8 9 happyReduction_18
+happyReduction_18 (_ `HappyStk`
+	(HappyAbsSyn8  happy_var_7) `HappyStk`
+	_ `HappyStk`
+	_ `HappyStk`
+	_ `HappyStk`
+	(HappyAbsSyn8  happy_var_3) `HappyStk`
+	_ `HappyStk`
+	_ `HappyStk`
+	happyRest)
+	 = HappyAbsSyn9
+		 (IfT happy_var_3 happy_var_7
+	) `HappyStk` happyRest
+
 happyNewToken action sts stk [] =
 	action 25 25 notHappyAtAll (HappyState action) sts stk []
 
@@ -421,6 +435,7 @@ data Requirement = Table String ColumnList
       | AsignVarVar String String
       | AsignVarStr String String
       | IfTF RequirementList RequirementList RequirementList
+      | IfT RequirementList RequirementList
      deriving (Eq,Show)      
 
 type RequirementList = [Requirement]
