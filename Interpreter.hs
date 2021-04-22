@@ -34,6 +34,7 @@ import Data.List
 type Row = [(String,String)]
 type File = [Row]
 
+
 evalStart :: Exp -> IO String
 evalStart (FinalExp bvs rs) =do
     evaluated <- evalRequirementList rs []
@@ -48,6 +49,7 @@ evalColumn SkipVar = []
 
 -- Eval all requirements
 evalRequirementList :: RequirementList -> File -> IO File
+evalRequirementList [] currentFile = do return currentFile
 evalRequirementList (r:rs) currentFile = do
     result <- evalRequirement r currentFile
     evalRequirementList rs result
@@ -56,7 +58,7 @@ evalRequirementList (r:rs) currentFile = do
 -- Eval requirements 1 by 1
 evalRequirement :: Requirement -> File -> IO File
 evalRequirement (Table name clms) currentFile = do
-    file <- fileReadCsv (name)   -- this is a list of rows
+    file <- fileReadCsv name   -- this is a list of rows
     let vars = evalColumnList clms
         newTable = map (zip vars) file
     if null currentFile
@@ -68,7 +70,7 @@ evalRequirement (Table name clms) currentFile = do
 -- calls to completeIf function to evaluate then and else (if true it evaluates rlt) (if false it evaluates rlf)
 -- then after the evaluation the function returns the row (either full of values or empty)
 evalRequirement (IfTF rle rlt rlf) currentFile = do
-    let result = completeIf rle rlt rlf currentFile
+    let result = (completeIf rle rlt rlf currentFile)
     return result
 
 evalRequirement (AsignVarStr v1 s1) currentFile = do
@@ -107,10 +109,11 @@ conjunctTable (row:rows) file2 = map (row ++) file2 ++ conjunctTable rows file2
 completeIf :: [Requirement] -> [Requirement] -> [Requirement] -> File -> File
 completeIf _ _ _ [] = []
 completeIf reqEval reqTrue reqFalse (row:rows)
-    | checkIf reqEval row && transformedTrue /= [] = transformedTrue : (completeIf reqEval reqTrue reqFalse rows)
-    | not (checkIf reqEval row) && transformedFalse /= [] = transformedFalse : (completeIf reqEval reqTrue reqFalse rows)
+    | checkedReqs && transformedTrue /= [] = transformedTrue : (completeIf reqEval reqTrue reqFalse rows)
+    | not checkedReqs && transformedFalse /= [] = transformedFalse : (completeIf reqEval reqTrue reqFalse rows)
     | otherwise = completeIf reqEval reqTrue reqFalse rows
-        where  transformedTrue = applyIf reqTrue row
+        where  checkedReqs = checkIf reqEval row
+               transformedTrue = applyIf reqTrue row
                transformedFalse = applyIf reqFalse row
 
 
@@ -124,16 +127,16 @@ applyIf :: [Requirement] -> Row -> Row
 applyIf [] row = row
 applyIf ((Eq v1 v2):reqs) row
     | checkRequirement (Eq v1 v2) row = applyIf reqs row
-    | otherwise = row
+    | otherwise = []
 applyIf ((NEq v1 v2):reqs) row
     | checkRequirement (NEq v1 v2) row = applyIf reqs row
-    | otherwise = row
+    | otherwise = []
 applyIf ((EqConst v1 v2):reqs) row
     | checkRequirement (EqConst v1 v2) row = applyIf reqs row
-    | otherwise = row
+    | otherwise = []
 applyIf ((NEqConst v1 v2):reqs) row
     | checkRequirement (NEqConst v1 v2) row = applyIf reqs row
-    | otherwise = row
+    | otherwise = []
 
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
@@ -157,11 +160,10 @@ setVarStr changeVar newVal ((var,val):rows)
     | otherwise = (var,val) : setVarStr changeVar newVal rows
 
 --           var        var
-setVarVar :: String -> String -> Row -> Row
 setVarVar _ _ [] = []
 setVarVar changeVar searchVar rowss@((var,val):rows)
-    | var == searchVar = setVarStr changeVar val rowss
-    | otherwise = setVarVar changeVar searchVar rows
+    | var == changeVar = (var, fetchVar searchVar rowss) : setVarVar changeVar searchVar rows
+    | otherwise = (var,val) : setVarVar changeVar searchVar rows
 
 
 checkRequirement :: Requirement -> Row -> Bool
