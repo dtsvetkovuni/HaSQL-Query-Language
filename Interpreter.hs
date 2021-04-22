@@ -48,9 +48,6 @@ evalColumn SkipVar = []
 
 -- Eval all requirements
 evalRequirementList :: RequirementList -> File -> IO File
-evalRequirementList [] currentFile = do return currentFile
-evalRequirementList [r] currentFile = do
-    evalRequirement r currentFile
 evalRequirementList (r:rs) currentFile = do
     result <- evalRequirement r currentFile
     evalRequirementList rs result
@@ -141,8 +138,6 @@ applyIf ((NEqConst v1 v2):reqs) row
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
 applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 (fetchVar v2 row) row)
---    where noQuotesV2 = removeQuotes v2
-
 applyIf _ row = error "faulty input in If statement :("
 
 
@@ -160,7 +155,6 @@ setVarStr _ _ [] = []
 setVarStr changeVar newVal ((var,val):rows)
     | var == changeVar = (var,removeQuotes newVal) : setVarStr changeVar newVal rows
     | otherwise = (var,val) : setVarStr changeVar newVal rows
---       where noQuotesNewVal = removeQuotes newVal
 
 --           var        var
 setVarVar :: String -> String -> Row -> Row
