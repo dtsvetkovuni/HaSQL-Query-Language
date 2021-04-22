@@ -1,5 +1,6 @@
-show ( x1 , "0" , x1) 
-where "Asda"( x1)
-
-
-& if (x2!=empty & x4 = empty) then (x1 <- "kur" & x132=xi213 & "paladin"( d123 , d4e )) else (x1 <- x5 & "Assa"( dus , daw ))
+show ( x1 , z) 
+where "Asda"( x1 , x2 )
+& "Aldi"( x3 , x4 )
+& x1 = x3
+& x1 = "kozi4ka"
+& if (x2!= "empty" & x4 = "") then (x1 <- "kur" & x132=xi213 & "paladin"( d123 , d4e )) else (x1 <- x5 & "Assa"( dus , daw ))

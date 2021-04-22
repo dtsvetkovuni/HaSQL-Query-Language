@@ -1,7 +1,7 @@
 module CSV_Reader where
 import Control.Exception
 import System.IO
-import Data.Char
+import Data.Char ( isSpace )
 --import Data.Text
 import System.Directory
 
