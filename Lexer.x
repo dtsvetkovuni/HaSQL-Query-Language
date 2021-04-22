@@ -26,7 +26,7 @@ tokens :-
   \,            { \p s -> TokenSeparator p }
   \"            { \p s -> TokenQuote p }
   $alpha [$alpha $digit \_ \’]*               { \p s -> TokenVar p s } 
-  \" [$alpha $digit \_ \’]* \"                { \p s -> TokenString p s }
+  \" [$alpha $digit $white \_ \’]* \"                { \p s -> TokenString p s }
   $digit+                                     { \p s -> TokenInt p (read s) } 
 
 { 

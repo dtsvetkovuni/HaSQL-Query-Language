@@ -6,31 +6,7 @@ import System.Environment
 import Control.Exception
 import System.IO
 import Data.List
---data Exp = FinalExp [String] RequirementList
---     deriving (Eq,Show) 
---
---data Column = Var String
---      | SkipVar
---     deriving (Eq,Show) 
---
---Requirement : str '(' ColumnList ')'           { Table $1 $3 }
---     | var '=' var                             { Eq $1 $3 }
---     | var "!=" var                            { NEq $1 $3 } 
---     | var '=' str                             { EqConst $1 $3 }
---     | var "!=" str                            { NEqConst $1 $3 }
---     | var "<-" var                            { AsignVarVar $1 $3 }
---     | var "<-" str                            { AsignVarStr $1 $3 }
---     | if '(' RequirementList ')' then '(' RequirementList ')' else '(' RequirementList ')'  { IfTF $3 $7 $11 }  
---
---type RequirementList = [Requirement]
---type ColumnList = [Column]
 
-
---FinalExp [x1,x2] [(Table "A" (x1,x2,_)),(Eq x1 x2),(Empty x2)]
-
--- This is the data type for assigned values to variables
---           varName, value
--- (String,String)   ("x1", "mencho")
 type Row = [(String,String)]
 type File = [Row]
 
@@ -54,7 +30,6 @@ evalRequirementList (r:rs) currentFile = do
     result <- evalRequirement r currentFile
     evalRequirementList rs result
 
-
 -- Eval requirements 1 by 1
 evalRequirement :: Requirement -> File -> IO File
 evalRequirement (Table name clms) currentFile = do
@@ -64,7 +39,6 @@ evalRequirement (Table name clms) currentFile = do
     if null currentFile
         then return newTable
         else return (conjunctTable currentFile newTable)
-
 
 -- calls to checkIf function to evaluate all of if requirements (rle) for each row 
 -- calls to completeIf function to evaluate then and else (if true it evaluates rlt) (if false it evaluates rlf)
@@ -92,21 +66,6 @@ conjunctTable ::  File -> File -> File
 conjunctTable [] file2 = []
 conjunctTable file1 [] = file1
 conjunctTable (row:rows) file2 = map (row ++) file2 ++ conjunctTable rows file2
---                                   concatRow row
-
-
---concatRow :: Row -> Row -> Row
---concatRow [] row2 = row2
---concatRow row1 [] = row1
---concatRow row1 row2 = row1 ++ row2
-
-
---TODO:
-
--- print function?
-
--- matching names function 
-
 
 -- This function takes the if(requirements) applyIfTrue applyIfFalse and a File
 -- and returns the File after applying the if statement on every row
@@ -120,13 +79,13 @@ completeIf reqEval reqTrue reqFalse (row:rows)
                transformedTrue = applyIf reqTrue row
                transformedFalse = applyIf reqFalse row
 
-
 -- goes over all requirements in the if (requirements) and checks whether they are true or false
 checkIf :: [Requirement] -> Row -> Bool
 checkIf [] _ = True
 checkIf (req:rs) row = (checkRequirement req row) && checkIf rs row
 
 -- goes over the if application if (requirements) applyIfTrue applyIfFalse
+--checkrequrement za ko e tuka
 applyIf :: [Requirement] -> Row -> Row
 applyIf [] row = row
 applyIf ((Eq v1 v2):reqs) row
@@ -141,12 +100,17 @@ applyIf ((EqConst v1 v2):reqs) row
 applyIf ((NEqConst v1 v2):reqs) row
     | checkRequirement (NEqConst v1 v2) row = applyIf reqs row
     | otherwise = []
+applyIf ((IfTF rle rlt rlf):reqs) row
+    | checkIf rle row = applyIf reqs (applyIf rlt row)
+    | otherwise = applyIf reqs (applyIf rlf row)
+applyIf ((IfT rle rlt):reqs) row
+    | checkIf rle row = applyIf reqs (applyIf rlt row)
+    | otherwise = row
 
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
 applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 v2 row)
 applyIf _ row = error "faulty input in If statement :("
-
 
 -- function to fetch the value of a variable
 --          var
@@ -166,10 +130,7 @@ setVarStr changeVar newVal ((var,val):rows)
 --           var        var
 setVarVar :: String -> String -> Row -> Row
 setVarVar _ _ [] = []
-setVarVar changeVar searchVar rowss@((var,val):rows)
-    | var == changeVar = (var, fetchVar searchVar rowss) : setVarVar changeVar searchVar rows
-    | otherwise = (var,val) : setVarVar changeVar searchVar rows
-
+setVarVar v1 v2 row = setVarStr v1 ("\"" ++ fetchVar v2 row ++ "\"") row
 
 checkRequirement :: Requirement -> Row -> Bool
 checkRequirement (Eq v1 v2) row = (fetchVar v1 row) == (fetchVar v2 row)
@@ -178,16 +139,11 @@ checkRequirement (EqConst v1 v2) row = (fetchVar v1 row) == removeQuotes v2
 checkRequirement (NEqConst v1 v2) row = (fetchVar v1 row) /= removeQuotes v2
 checkRequirement _ row = True
 
-
 showResult :: [String] -> File -> String
 showResult [] _ = error "There are no bound vars dummy!"
 showResult _ [] = ""
 showResult vars outputFile = concat (sort (map (showResultLine vars) outputFile))
 
-
 showResultLine :: [String] -> Row -> String
-showResultLine (var:[]) row = fetchVar var row ++ "\n"
+showResultLine [var] row = fetchVar var row ++ "\n"
 showResultLine (var:vars) row = fetchVar var row ++ "," ++ showResultLine vars row
-
-
-
