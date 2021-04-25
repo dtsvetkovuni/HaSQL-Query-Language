@@ -54,6 +54,7 @@ Requirement : str '(' ColumnList ')'           { Table $1 $3 }
      | var "<-" var                            { AsignVarVar $1 $3 }
      | var "<-" str                            { AsignVarStr $1 $3 }
      | if '(' RequirementList ')' then '(' RequirementList ')' else '(' RequirementList ')'  { IfTF $3 $7 $11 }
+     | if '(' RequirementList ')' then '(' RequirementList ')'                               { IfT $3 $7 }
 
 
 { 
@@ -75,6 +76,7 @@ data Requirement = Table String ColumnList
       | AsignVarVar String String
       | AsignVarStr String String
       | IfTF RequirementList RequirementList RequirementList
+      | IfT RequirementList RequirementList
      deriving (Eq,Show)      
 
 type RequirementList = [Requirement]
