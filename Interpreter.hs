@@ -116,7 +116,7 @@ applyIf _ row = error "Faulty input in If statement?"
 --          var                     :Function to fetch the value of a variable
 fetchVar :: String -> Row -> String
 fetchVar varName [] = error outputError
-    where outputError = "Variable " ++ varName ++ "not found!"
+    where outputError = "Variable " ++ varName ++ " not found!"
 fetchVar varName ((var,val):restOfRow)
     | varName == var = val
     | otherwise = fetchVar varName restOfRow
