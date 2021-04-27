@@ -111,11 +111,12 @@ applyIf ((IfT rle rlt):reqs) row
 -- Changes the value of v1 to be the value of v2
 applyIf ((AsignVarVar v1 v2):reqs) row = applyIf reqs (setVarVar v1 v2 row)
 applyIf ((AsignVarStr v1 v2):reqs) row = applyIf reqs (setVarStr v1 v2 row)
-applyIf _ row = error "faulty input in If statement :("
+applyIf _ row = error "Faulty input in If statement?"
 
 --          var                     :Function to fetch the value of a variable
 fetchVar :: String -> Row -> String
-fetchVar varName [] = ""
+fetchVar varName [] = error outputError
+    where outputError = "Variable " ++ varName ++ "not found!"
 fetchVar varName ((var,val):restOfRow)
     | varName == var = val
     | otherwise = fetchVar varName restOfRow
@@ -142,7 +143,7 @@ checkRequirement _ row = True
 
 -- Prepares the output File for printing
 showResult :: [String] -> File -> String
-showResult [] _ = error "There are no bound vars dummy!"
+showResult [] _ = error "There are no bound vars!"
 showResult _ [] = ""
 showResult vars outputFile = concat (sort (map (showResultRow vars) outputFile))
 
