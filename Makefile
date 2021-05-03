@@ -3,7 +3,7 @@
 # csvql.exe takes an argument input file "example.cql"
 # Usage: .\csvql.exe example.cql
 
-csvql: Lexer.hs Grammar.hs interpreter.hs
+csvql: Lexer.hs Grammar.hs Interpreter.hs
 	ghc -o csvql main.hs
 
 Lexer.hs: Lexer.x
