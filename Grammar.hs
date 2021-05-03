@@ -6,11 +6,11 @@ import qualified Data.Bits as Bits
 import Control.Applicative(Applicative(..))
 import Control.Monad (ap)
 
--- parser produced by Happy Version 1.20.0
+-- parser produced by Happy Version 1.19.11
 
 data HappyAbsSyn t4 t5 t6 t7 t8 t9
 	= HappyTerminal (Token)
-	| HappyErrorToken Prelude.Int
+	| HappyErrorToken Int
 	| HappyAbsSyn4 t4
 	| HappyAbsSyn5 t5
 	| HappyAbsSyn6 t6
@@ -18,7 +18,7 @@ data HappyAbsSyn t4 t5 t6 t7 t8 t9
 	| HappyAbsSyn8 t8
 	| HappyAbsSyn9 t9
 
-happyExpList :: Happy_Data_Array.Array Prelude.Int Prelude.Int
+happyExpList :: Happy_Data_Array.Array Int Int
 happyExpList = Happy_Data_Array.listArray (0,65) ([512,0,4,0,32,0,0,1024,0,2,2048,0,32,4,4096,384,0,0,0,2048,0,256,36864,1,1024,0,65,32768,1,768,0,32774,3072,256,24,0,0,8,0,0,0,0,0,0,0,0,0,0,4,4096,0,0,0,0,260,0,0,1,0,1,0,1024,96,4096,16384,0,8192,16384,1536,0,1,0,0
 	])
 
@@ -26,14 +26,14 @@ happyExpList = Happy_Data_Array.listArray (0,65) ([512,0,4,0,32,0,0,1024,0,2,204
 happyExpListPerState st =
     token_strs_expected
   where token_strs = ["error","%dummy","%start_queryLang","Exp","BoundVars","ColumnList","Column","RequirementList","Requirement","show","where","if","then","else","\"<-\"","'&'","'_'","'='","\"!=\"","'('","')'","','","var","str","%eof"]
-        bit_start = st Prelude.* 25
-        bit_end = (st Prelude.+ 1) Prelude.* 25
+        bit_start = st * 25
+        bit_end = (st + 1) * 25
         read_bit = readArrayBit happyExpList
-        bits = Prelude.map read_bit [bit_start..bit_end Prelude.- 1]
-        bits_indexed = Prelude.zip bits [0..24]
-        token_strs_expected = Prelude.concatMap f bits_indexed
-        f (Prelude.False, _) = []
-        f (Prelude.True, nr) = [token_strs Prelude.!! nr]
+        bits = map read_bit [bit_start..bit_end - 1]
+        bits_indexed = zip bits [0..24]
+        token_strs_expected = concatMap f bits_indexed
+        f (False, _) = []
+        f (True, nr) = [token_strs !! nr]
 
 action_0 (10) = happyShift action_2
 action_0 (4) = happyGoto action_3
@@ -393,25 +393,25 @@ newtype HappyIdentity a = HappyIdentity a
 happyIdentity = HappyIdentity
 happyRunIdentity (HappyIdentity a) = a
 
-instance Prelude.Functor HappyIdentity where
+instance Functor HappyIdentity where
     fmap f (HappyIdentity a) = HappyIdentity (f a)
 
 instance Applicative HappyIdentity where
     pure  = HappyIdentity
     (<*>) = ap
-instance Prelude.Monad HappyIdentity where
+instance Monad HappyIdentity where
     return = pure
     (HappyIdentity p) >>= q = q p
 
 happyThen :: () => HappyIdentity a -> (a -> HappyIdentity b) -> HappyIdentity b
-happyThen = (Prelude.>>=)
+happyThen = (>>=)
 happyReturn :: () => a -> HappyIdentity a
-happyReturn = (Prelude.return)
-happyThen1 m k tks = (Prelude.>>=) m (\a -> k a tks)
+happyReturn = (return)
+happyThen1 m k tks = (>>=) m (\a -> k a tks)
 happyReturn1 :: () => a -> b -> HappyIdentity a
-happyReturn1 = \a tks -> (Prelude.return) a
-happyError' :: () => ([(Token)], [Prelude.String]) -> HappyIdentity a
-happyError' = HappyIdentity Prelude.. (\(tokens, _) -> parseError tokens)
+happyReturn1 = \a tks -> (return) a
+happyError' :: () => ([(Token)], [String]) -> HappyIdentity a
+happyError' = HappyIdentity . (\(tokens, _) -> parseError tokens)
 queryLang tks = happyRunIdentity happySomeParser where
  happySomeParser = happyThen (happyParse action_0 tks) (\x -> case x of {HappyAbsSyn4 z -> happyReturn z; _other -> notHappyAtAll })
 
@@ -448,7 +448,9 @@ parseError [] = error "Unknown Parse Error"
 parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 parseError tokens = error "Parse error"
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
--- $Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp $
+{-# LINE 1 "templates/GenericTemplate.hs" #-}
+{-# LINE 1 "<built-in>" #-}
+{-# LINE 1 "<command-line>" #-}
 
 
 
@@ -456,7 +458,9 @@ parseError tokens = error "Parse error"
 
 
 
+# 1 "/usr/include/stdc-predef.h" 1 3 4
 
+# 17 "/usr/include/stdc-predef.h" 3 4
 
 
 
@@ -491,7 +495,6 @@ parseError tokens = error "Parse error"
 
 
 
-data Happy_IntList = HappyCons Prelude.Int Happy_IntList
 
 
 
@@ -501,6 +504,8 @@ data Happy_IntList = HappyCons Prelude.Int Happy_IntList
 
 
 
+{-# LINE 7 "<command-line>" #-}
+{-# LINE 1 "/usr/lib/ghc/include/ghcversion.h" #-}
 
 
 
@@ -516,6 +521,8 @@ data Happy_IntList = HappyCons Prelude.Int Happy_IntList
 
 
 
+{-# LINE 7 "<command-line>" #-}
+{-# LINE 1 "/tmp/ghc8336_0/ghc_2.h" #-}
 
 
 
@@ -531,6 +538,210 @@ data Happy_IntList = HappyCons Prelude.Int Happy_IntList
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{-# LINE 7 "<command-line>" #-}
+{-# LINE 1 "templates/GenericTemplate.hs" #-}
+-- Id: GenericTemplate.hs,v 1.26 2005/01/14 14:47:22 simonmar Exp 
+
+
+
+
+
+
+
+
+
+{-# LINE 43 "templates/GenericTemplate.hs" #-}
+
+data Happy_IntList = HappyCons Int Happy_IntList
+
+
+
+
+
+
+
+{-# LINE 65 "templates/GenericTemplate.hs" #-}
+
+{-# LINE 75 "templates/GenericTemplate.hs" #-}
+
+{-# LINE 84 "templates/GenericTemplate.hs" #-}
 
 infixr 9 `HappyStk`
 data HappyStk a = HappyStk a (HappyStk a)
@@ -543,7 +754,7 @@ happyParse start_state = happyNewToken start_state notHappyAtAll notHappyAtAll
 -----------------------------------------------------------------------------
 -- Accepting the parse
 
--- If the current token is ERROR_TOK, it means we've just accepted a partial
+-- If the current token is (1), it means we've just accepted a partial
 -- parse (a %partial parser).  We must ignore the saved token on the top of
 -- the stack in this case.
 happyAccept (1) tk st sts (_ `HappyStk` ans `HappyStk` _) =
@@ -554,51 +765,14 @@ happyAccept j tk st sts (HappyStk ans _) =
 -----------------------------------------------------------------------------
 -- Arrays only: do the next action
 
+{-# LINE 137 "templates/GenericTemplate.hs" #-}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{-# LINE 147 "templates/GenericTemplate.hs" #-}
 indexShortOffAddr arr off = arr Happy_Data_Array.! off
 
 
 {-# INLINE happyLt #-}
-happyLt x y = (x Prelude.< y)
+happyLt x y = (x < y)
 
 
 
@@ -606,7 +780,7 @@ happyLt x y = (x Prelude.< y)
 
 
 readArrayBit arr bit =
-    Bits.testBit (indexShortOffAddr arr (bit `Prelude.div` 16)) (bit `Prelude.mod` 16)
+    Bits.testBit (indexShortOffAddr arr (bit `div` 16)) (bit `mod` 16)
 
 
 
@@ -619,8 +793,8 @@ readArrayBit arr bit =
 
 
 newtype HappyState b c = HappyState
-        (Prelude.Int ->                    -- token number
-         Prelude.Int ->                    -- token number (yes, again)
+        (Int ->                    -- token number
+         Int ->                    -- token number (yes, again)
          b ->                           -- token semantic value
          HappyState b c ->              -- current state
          [HappyState b c] ->            -- state stack
@@ -667,7 +841,7 @@ happySpecReduce_3 nt fn j tk _ ((_):(((_):(sts@(((st@(HappyState (action))):(_))
 happyReduce k i fn (1) tk st sts stk
      = happyFail [] (1) tk st sts stk
 happyReduce k nt fn j tk st sts stk
-     = case happyDrop (k Prelude.- ((1) :: Prelude.Int)) sts of
+     = case happyDrop (k - ((1) :: Int)) sts of
          sts1@(((st1@(HappyState (action))):(_))) ->
                 let r = fn stk in  -- it doesn't hurt to always seq here...
                 happyDoSeq r (action nt j tk st1 sts1 r)
@@ -691,34 +865,27 @@ happyMonad2Reduce k nt fn j tk st sts stk =
 
 
 
-             _ = nt :: Prelude.Int
+             _ = nt :: Int
              new_state = action
 
           in
           happyThen1 (fn stk tk) (\r -> happyNewToken new_state sts1 (r `HappyStk` drop_stk))
 
 happyDrop (0) l = l
-happyDrop n ((_):(t)) = happyDrop (n Prelude.- ((1) :: Prelude.Int)) t
+happyDrop n ((_):(t)) = happyDrop (n - ((1) :: Int)) t
 
 happyDropStk (0) l = l
-happyDropStk n (x `HappyStk` xs) = happyDropStk (n Prelude.- ((1)::Prelude.Int)) xs
+happyDropStk n (x `HappyStk` xs) = happyDropStk (n - ((1)::Int)) xs
 
 -----------------------------------------------------------------------------
 -- Moving to a new state after a reduction
 
-
-
-
-
-
-
-
-
+{-# LINE 267 "templates/GenericTemplate.hs" #-}
 happyGoto action j tk st = action j j tk (HappyState action)
 
 
 -----------------------------------------------------------------------------
--- Error recovery (ERROR_TOK is the error token)
+-- Error recovery ((1) is the error token)
 
 -- parse error if we are in recovery and we fail again
 happyFail explist (1) tk old_st _ stk@(x `HappyStk` _) =
@@ -731,22 +898,22 @@ happyFail explist (1) tk old_st _ stk@(x `HappyStk` _) =
     for now --SDM
 
 -- discard a state
-happyFail  ERROR_TOK tk old_st CONS(HAPPYSTATE(action),sts) 
+happyFail  (1) tk old_st (((HappyState (action))):(sts)) 
                                                 (saved_tok `HappyStk` _ `HappyStk` stk) =
 --      trace ("discarding state, depth " ++ show (length stk))  $
-        DO_ACTION(action,ERROR_TOK,tk,sts,(saved_tok`HappyStk`stk))
+        action (1) (1) tk (HappyState (action)) sts ((saved_tok`HappyStk`stk))
 -}
 
 -- Enter error recovery: generate an error token,
 --                       save the old token and carry on.
 happyFail explist i tk (HappyState (action)) sts stk =
 --      trace "entering error recovery" $
-        action (1) (1) tk (HappyState (action)) sts ((HappyErrorToken (i)) `HappyStk` stk)
+        action (1) (1) tk (HappyState (action)) sts ( (HappyErrorToken (i)) `HappyStk` stk)
 
 -- Internal happy errors:
 
 notHappyAtAll :: a
-notHappyAtAll = Prelude.error "Internal Happy error\n"
+notHappyAtAll = error "Internal Happy error\n"
 
 -----------------------------------------------------------------------------
 -- Hack to get the typechecker to accept our action functions
@@ -764,7 +931,7 @@ notHappyAtAll = Prelude.error "Internal Happy error\n"
 --      happySeq = happyDontSeq
 
 happyDoSeq, happyDontSeq :: a -> b -> b
-happyDoSeq   a b = a `Prelude.seq` b
+happyDoSeq   a b = a `seq` b
 happyDontSeq a b = b
 
 -----------------------------------------------------------------------------
@@ -772,14 +939,7 @@ happyDontSeq a b = b
 -- of deciding to inline happyGoto everywhere, which increases the size of
 -- the generated parser quite a bit.
 
-
-
-
-
-
-
-
-
+{-# LINE 333 "templates/GenericTemplate.hs" #-}
 {-# NOINLINE happyShift #-}
 {-# NOINLINE happySpecReduce_0 #-}
 {-# NOINLINE happySpecReduce_1 #-}
