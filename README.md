@@ -1,6 +1,6 @@
 # HaSQL Query Language
 
-The HaSQL is part of a PLC Coursework(Southampton Uni) 2021 of Dimitar Tsvetkov, Gerasim Tsonev(Gerasim2000) and Kaloyan Spirov.<br>
+The HaSQL was part of a PLC Coursework(Southampton Uni) 2021 of Dimitar Tsvetkov, Gerasim Tsonev(Gerasim2000) and Kaloyan Spirov.<br>
 
 It was created using Haskell's Alex and Happy tools for parsering and lexing.<br>
 Tested and working with GHC (Version 8.4.3) on Windows 10 and Linux.<br>
